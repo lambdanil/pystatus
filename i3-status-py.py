@@ -77,9 +77,15 @@ def get_music():
             if len(title) > 30:
                 title = title[:40]+"..."
         if "Playing" in status:
-            playing_str = str(f"> {artist} :: {title}")
+            if artist != "":
+                playing_str = str(f"> {artist} :: {title}")
+            else:
+                playing_str = str(f"> {title}")
         else:
-            playing_str = str(f"|| {artist} :: {title}")
+            if artist != "":
+                playing_str = str(f"|| {artist} :: {title}")
+            else:
+                playing_str = str(f"|| {title}")
     except:
         playing_str = ("□")
     return(playing_str)
@@ -99,4 +105,4 @@ while True:
     if '"' in status:
         status = status.replace('"',"'")
     os.system(f'xsetroot -name "                                                                                            {status}"')
-    time.sleep(5)
+    time.sleep(1)
