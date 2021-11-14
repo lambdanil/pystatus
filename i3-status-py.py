@@ -74,20 +74,20 @@ def get_music():
         if (len(artist)+len(title)) > 60:
             if len(artist) > 15:
                 artist = artist[:15]+"..."
-            if len(title) > 30:
-                title = title[:40]+"..."
+            if len(title) > 25:
+                title = title[:25]+"..."
         if "Playing" in status:
             if artist != "":
-                playing_str = str(f"> {artist} :: {title}")
+                playing_str = str(f" {artist} :: {title}")
             else:
-                playing_str = str(f"> {title}")
+                playing_str = str(f" {title}")
         else:
             if artist != "":
-                playing_str = str(f"|| {artist} :: {title}")
+                playing_str = str(f" {artist} :: {title}")
             else:
-                playing_str = str(f"|| {title}")
+                playing_str = str(f" {title}")
     except:
-        playing_str = ("□")
+        playing_str = ("")
     return(playing_str)
 
 while True:
@@ -96,10 +96,11 @@ while True:
     status_volume = get_volume()
     status_mic = get_volume_mic()
     status_music = get_music()
-    if len(status_music) > 40:
-        status = str(f"{status_music} | {status_volume} {status_mic} | {status_date}")
+    if len(status_music) > 30:
+        status = str(f"{status_music} |  {status_volume}  {status_mic} |  {status_date}")
     else:
-        status = str(f"{status_music} | {status_ip} | {status_volume} {status_mic} | {status_date}")
+        status = str(f" {status_music} |  {status_ip} |  {status_volume}  {status_mic} |  {status_date}")
+
 
 #    print(status)
     if '"' in status:
