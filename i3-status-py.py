@@ -71,8 +71,8 @@ def get_music(symbols,iplen):
         artist = artist.strip()
         if symbols > 32:
             if (len(artist)+len(title)) > 50:
-                if len(artist) > 15:
-                    artist = artist[:15]+"..."
+                if len(artist) > 12:
+                    artist = artist[:12]+"..."
                 if len(title) > 29:
                     title = title[:29]+"..."
         if "Playing" in status:
