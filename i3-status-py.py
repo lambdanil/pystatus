@@ -2,6 +2,8 @@ import subprocess
 import time
 import os
 
+statuslen = int(102)
+
 def get_date():
     date = subprocess.check_output('date +"%d/%m/%Y | %H:%M"', shell=True)
     date = str(date).replace("b'","")
@@ -69,7 +71,9 @@ def get_music(symbols,iplen):
         status = str(subprocess.check_output("playerctl status", shell=True))
         title = title.strip()
         artist = artist.strip()
-        if symbols > 32:
+#       102=32
+        print(statuslen-70)
+        if symbols > (statuslen-70):
             if (len(artist)+len(title)) > 50:
                 if len(artist) > 12:
                     artist = artist[:12]+"..."
@@ -88,10 +92,11 @@ def get_music(symbols,iplen):
     except:
         playing_str = ("")
     show_ip = False
-    while (len(playing_str)+symbols+iplen) < 83:
+#   102=83,88
+    while (len(playing_str)+symbols+iplen) < (statuslen-19):
         playing_str += " "
         show_ip = True
-    while (len(playing_str)+symbols) < 88 and (show_ip == False):
+    while (len(playing_str)+symbols) < (statuslen-14) and (show_ip == False):
         playing_str += " "
     return(playing_str,show_ip)
 
