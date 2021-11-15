@@ -40,13 +40,13 @@ def get_volume_mic():
     else:
         mute = "[off]"
     return(mute)
-def get_music():
+def get_music(symbols,iplen):
     try:
-        music = str(subprocess.check_output("playerctl -a metadata", shell=True))
+        music = str(subprocess.check_output("playerctl -a metadata", shell=True,encoding="utf-8"))
         music_split = music.split(" ")
 #        if len(music_split) == 3:
         try:
-            music_split = music.split("\\n")
+            music_split = music.split("\n")
             artist = music_split[1]
             artist_split = artist.split("artist")
             artist = artist_split[1]
@@ -57,7 +57,7 @@ def get_music():
             title = title.lstrip()
 #        else:
         except:
-            music_split = music.split("\\n")
+            music_split = music.split("\n")
             artist = music_split[0]
             artist_split = artist.split("artist")
             artist = artist_split[1]
@@ -69,13 +69,12 @@ def get_music():
         status = str(subprocess.check_output("playerctl status", shell=True))
         title = title.strip()
         artist = artist.strip()
-        if (len(title)+len(artist))> 90:
-            title = title[:30]+"..."
-        if (len(artist)+len(title)) > 60:
-            if len(artist) > 15:
-                artist = artist[:15]+"..."
-            if len(title) > 25:
-                title = title[:25]+"..."
+        if symbols > 32:
+            if (len(artist)+len(title)) > 50:
+                if len(artist) > 15:
+                    artist = artist[:15]+"..."
+                if len(title) > 29:
+                    title = title[:29]+"..."
         if "Playing" in status:
             if artist != "":
                 playing_str = str(f" {artist} :: {title}")
@@ -88,20 +87,24 @@ def get_music():
                 playing_str = str(f" {title}")
     except:
         playing_str = ("")
-    return(playing_str)
+    show_ip = False
+    while (len(playing_str)+symbols+iplen) < 83:
+        playing_str += " "
+        show_ip = True
+    while (len(playing_str)+symbols) < 88 and (show_ip == False):
+        playing_str += " "
+    return(playing_str,show_ip)
 
 while True:
     status_ip = get_ip()
     status_date = get_date()
     status_volume = get_volume()
     status_mic = get_volume_mic()
-    status_music = get_music()
-    if len(status_music) > 30:
+    status_music,ipshow = get_music(len(status_date)+len(status_volume)+len(status_mic),len(status_ip))
+    if ipshow == False:
         status = str(f"{status_music} |  {status_volume}  {status_mic} |  {status_date}")
     else:
-        status = str(f" {status_music} |  {status_ip} |  {status_volume}  {status_mic} |  {status_date}")
-
-
+        status = str(f"{status_music} |  {status_ip} |  {status_volume}  {status_mic} |  {status_date}")
 #    print(status)
     if '"' in status:
         status = status.replace('"',"'")
