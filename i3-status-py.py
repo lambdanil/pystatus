@@ -3,6 +3,9 @@ import time
 import os
 
 statuslen = int(102)
+intray = ["/usr/games/lutris","/home/jan/.local/share/Steam","/usr/share/discord/Discord"]
+
+icon_width=3
 
 def get_date():
     date = subprocess.check_output('date +"%d/%m/%Y | %H:%M"', shell=True)
@@ -42,7 +45,7 @@ def get_volume_mic():
     else:
         mute = "[off]"
     return(mute)
-def get_music(symbols,iplen):
+def get_music(symbols,iplen,trayicons,icon_width):
     try:
         music = str(subprocess.check_output("playerctl -a metadata", shell=True,encoding="utf-8"))
         music_split = music.split(" ")
@@ -72,8 +75,7 @@ def get_music(symbols,iplen):
         title = title.strip()
         artist = artist.strip()
 #       102=32
-        print(statuslen-70)
-        if symbols > (statuslen-70):
+        if symbols > ((statuslen-70)-trayicons):
             if (len(artist)+len(title)) > 50:
                 if len(artist) > 12:
                     artist = artist[:12]+"..."
@@ -92,20 +94,28 @@ def get_music(symbols,iplen):
     except:
         playing_str = ("")
     show_ip = False
-#   102=83,88
-    while (len(playing_str)+symbols+iplen) < (statuslen-19):
+#   102=83,88   
+    while (len(playing_str)+symbols+iplen) < (statuslen-17-trayicons*icon_width):
         playing_str += " "
         show_ip = True
-    while (len(playing_str)+symbols) < (statuslen-14) and (show_ip == False):
+    while (len(playing_str)+symbols) < (statuslen-12-trayicons*icon_width) and (show_ip == False):
         playing_str += " "
     return(playing_str,show_ip)
 
 while True:
+    trayicons=0
+    for item in intray:
+        try:
+            output = subprocess.check_output(f"ps -AF | grep {item} | grep -v grep", shell=True)
+        except:
+            output=""
+        if output != "":
+            trayicons+=1
     status_ip = get_ip()
     status_date = get_date()
     status_volume = get_volume()
     status_mic = get_volume_mic()
-    status_music,ipshow = get_music(len(status_date)+len(status_volume)+len(status_mic),len(status_ip))
+    status_music,ipshow = get_music(len(status_date)+len(status_volume)+len(status_mic),len(status_ip),trayicons,icon_width)
     if ipshow == False:
         status = str(f"{status_music} |  {status_volume}  {status_mic} |  {status_date}")
     else:
