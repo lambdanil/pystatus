@@ -47,35 +47,50 @@ def get_volume_mic():
     return(mute)
 def get_music(symbols,iplen,trayicons,icon_width):
     try:
-        music = str(subprocess.check_output("playerctl -a metadata", shell=True,encoding="utf-8"))
+        player = str(subprocess.check_output("playerctl -l | head -n 1", shell=True,encoding="utf-8"))
+        player_split = player.split(".")
+        player = player_split[0]
+        try:
+            artist = str(subprocess.check_output(f"(playerctl -a metadata | grep {player}) | grep artist", shell=True,encoding="utf-8"))
+        except:
+            artist = ""
+        try:
+            title = str(subprocess.check_output(f"(playerctl -a metadata | grep {player}) | grep title", shell=True,encoding="utf-8"))
+        except:
+            title=""
+        print(artist,title)
+        music=str(title+";;;"+artist)
         music_split = music.split(" ")
 #        if len(music_split) == 3:
         try:
-            music_split = music.split("\n")
+            print(music)
+            music_split = music.split(";;;")
+            title = music_split[0]
+            title_split = title.split("title")
+            title = title_split[1]
             artist = music_split[1]
             artist_split = artist.split("artist")
             artist = artist_split[1]
-            title = music_split[2]
-            title_split = title.split("title")
-            title = title_split[1]
             artist = artist.lstrip()
             title = title.lstrip()
 #        else:
         except:
-            music_split = music.split("\n")
-            artist = music_split[0]
-            artist_split = artist.split("artist")
-            artist = artist_split[1]
-            title = music_split[1]
+            music_split = music.split(";;;")
+            title = music_split[0]
             title_split = title.split("title")
             title = title_split[1]
-            artist = artist.lstrip()
-            title = title.lstrip()
+#            title = music_split[0]
+#            title_split = title.split("title")
+#            title = title_split[1]
+#            artist = artist.lstrip()
+        title = title.lstrip()
         status = str(subprocess.check_output("playerctl status", shell=True))
         title = title.strip()
         artist = artist.strip()
 #       102=32
         if symbols > ((statuslen-70)-trayicons):
+            if len(title) > 50:
+                title = title[:47]+"..."
             if (len(artist)+len(title)) > 50:
                 if len(artist) > 12:
                     artist = artist[:12]+"..."
@@ -91,14 +106,13 @@ def get_music(symbols,iplen,trayicons,icon_width):
                 playing_str = str(f" {artist} :: {title}")
             else:
                 playing_str = str(f" {title}")
-    except:
+    except: 
         playing_str = ("")
-    show_ip = False
 #   102=83,88   
-    while (len(playing_str)+symbols+iplen) < (statuslen-17-trayicons*icon_width):
+    while (len(playing_str)+symbols+iplen) < (statuslen-18-trayicons*icon_width):
         playing_str += " "
         show_ip = True
-    while (len(playing_str)+symbols) < (statuslen-12-trayicons*icon_width) and (show_ip == False):
+    while (len(playing_str)+symbols) < (statuslen-13-trayicons*icon_width) and (show_ip == False):
         playing_str += " "
     return(playing_str,show_ip)
 
@@ -116,10 +130,15 @@ while True:
     status_volume = get_volume()
     status_mic = get_volume_mic()
     status_music,ipshow = get_music(len(status_date)+len(status_volume)+len(status_mic),len(status_ip),trayicons,icon_width)
-    if ipshow == False:
-        status = str(f"{status_music} |  {status_volume}  {status_mic} |  {status_date}")
+    space = ""
+    if trayicons == 0:
+        space = " "
     else:
-        status = str(f"{status_music} |  {status_ip} |  {status_volume}  {status_mic} |  {status_date}")
+        space = ""
+    if ipshow == False:
+        status = str(f"{status_music} |  {status_volume}  {status_mic} |  {status_date}{space}")
+    else:
+        status = str(f"{status_music} |  {status_ip} |  {status_volume}  {status_mic} |  {status_date}{space}")
 #    print(status)
     if '"' in status:
         status = status.replace('"',"'")
