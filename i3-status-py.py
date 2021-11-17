@@ -2,8 +2,9 @@ import subprocess
 import time
 import os
 
+# Set the number of characters that fit into your bar here
 statuslen = int(124)
-# 22
+# Here add programs that have a tray icon
 intray = ["lutris","vlc","steam","discord"]
 
 icon_width=3
