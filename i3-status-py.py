@@ -2,9 +2,8 @@ import subprocess
 import time
 import os
 
-# Set the number of characters that fit into your bar here
 statuslen = int(124)
-# Here add programs that have a tray icon
+# 22
 intray = ["lutris","vlc","steam","discord"]
 
 icon_width=3
@@ -96,7 +95,8 @@ def get_music(symbols,iplen,trayicons,icon_width):
         maxlen = 50+num
         maxlen_title = 47+num
         maxlen_artist = int(12+(num/2))
-        maxlen_title2 = int(28+(num/2))
+#        maxlen_title2 = int(28+(num/2))
+        maxlen_title2 = int((statuslen/2)-len(artist)+2)
         title_old = title
         artist_old = artist
         if symbols > ((statuslen-70-num)-(trayicons*icon_width)):
@@ -118,7 +118,7 @@ def get_music(symbols,iplen,trayicons,icon_width):
                         title = title_old[:maxlen_title-((int((icon_width*trayicons)/2))-1)]+"..."
                     else:
                         title = title_old[:maxlen_title-(int((icon_width*trayicons)/2))]+"..."
-                if (len(artist_old)+len(title)) > (maxlen-((icon_width)*trayicons)):
+                if (len(artist_old)+len(title)) > (maxlen-((icon_width)*trayicons)-1):
                     if len(artist) > (maxlen_artist-(int((icon_width/2)*trayicons))):
                         artist = artist[:(maxlen_artist-int(((icon_width/2)*trayicons)))]+"..."
                     if len(title) > (maxlen_title2-icon_width):
